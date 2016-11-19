@@ -91,6 +91,8 @@ library
                  , time
                  , case-insensitive
                  , wai
+                 , load-env
+                 , yesod-auth-oauth2
 
 executable         conference-management-system
     if flag(library-only)

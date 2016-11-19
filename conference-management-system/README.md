@@ -15,7 +15,8 @@ You'll need to set up a MySQL server to run locally while you develop (for now).
 You can login to your MySQL server by running `mysql -u root -p`. You'll need to
 make a DB for this app. We expect to find a DB named `conference_management_system`
 and to be able to login as `conference_management_system@localhost` with
-`conference_management_system` as the password.
+`conference_management_system` as the password. When we run this in production,
+we will have to change the password.
 
 ### Yesod
 We are using a web framework for Haskell called [Yesod](http://www.yesodweb.com/).

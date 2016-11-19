@@ -38,7 +38,9 @@ import Network.Wai.Middleware.RequestLogger (Destination (Logger),
                                              mkRequestLogger, outputFormat)
 import System.Log.FastLogger                (defaultBufSize, newStdoutLoggerSet,
                                              toLogStr)
-
+import LoadEnv
+import System.Environment
+import qualified Data.Text as T
 -- Import all relevant handler modules here.
 -- Don't forget to add new modules to your cabal file!
 import Handler.Common
@@ -57,6 +59,7 @@ mkYesodDispatch "App" resourcesApp
 -- migrations handled by Yesod.
 makeFoundation :: AppSettings -> IO App
 makeFoundation appSettings = do
+    loadEnv
     -- Some basic initializations: HTTP connection manager, logger, and static
     -- subsite.
     appHttpManager <- newManager
@@ -64,6 +67,7 @@ makeFoundation appSettings = do
     appStatic <-
         (if appMutableStatic appSettings then staticDevel else static)
         (appStaticDir appSettings)
+    appGoogleOAuthKeys <- getOAuthKeys
 
     -- See http://www.yesodweb.com/blog/2016/11/use-mysql-safely-in-yesod
     MySQL.initLibrary
@@ -90,8 +94,14 @@ makeFoundation appSettings = do
 
     -- Return the foundation
     return $ mkFoundation pool
+    where
+    getOAuthKeys :: IO OAuthKeys
+    getOAuthKeys = do
+      ident <- getEnv "GOOGLE_OAUTH_CLIENT_ID"
+      secret <- getEnv "GOOGLE_OAUTH_CLIENT_SECRET"
+      return (OAuthKeys (T.pack ident) (T.pack secret))
 
--- | Convert our foundation to a WAI Application by calling @toWaiAppPlain@ and
+   -- | Convert our foundation to a WAI Application by calling @toWaiAppPlain@ and
 -- applying some additional middlewares.
 makeApplication :: App -> IO Application
 makeApplication foundation = do
