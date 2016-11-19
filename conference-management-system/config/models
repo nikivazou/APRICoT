@@ -1,8 +1,12 @@
 User
-    ident Text
-    password Text Maybe
-    UniqueUser ident
-    deriving Typeable
+    username Text
+    UniqueUsername username
+    password ByteString
+    emailAddress Text
+    verified Bool
+    verifyKey Text
+    resetPasswordKey Text
+    deriving Show
 Email
     email Text
     userId UserId Maybe

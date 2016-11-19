@@ -93,6 +93,7 @@ library
                  , wai
                  , load-env
                  , yesod-auth-oauth2
+                 , yesod-auth-account
 
 executable         conference-management-system
     if flag(library-only)

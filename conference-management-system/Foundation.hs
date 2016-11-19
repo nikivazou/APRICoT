@@ -11,6 +11,8 @@ import Yesod.Auth.Dummy
 import Yesod.Default.Util   (addStaticContentExternal)
 import Yesod.Core.Types     (Logger)
 import Yesod.Auth.OAuth2.Google
+import Yesod.Auth
+import Yesod.Auth.Account
 import qualified Yesod.Core.Unsafe as Unsafe
 import qualified Data.CaseInsensitive as CI
 import qualified Data.Text.Encoding as TE
@@ -201,17 +203,22 @@ instance YesodAuth App where
     redirectToReferer _ = True
 
     authenticate creds = runDB $ do
-        x <- getBy $ UniqueUser $ credsIdent creds
+        x <- getBy $ UniqueUsername $ credsIdent creds
         case x of
             Just (Entity uid _) -> return $ Authenticated uid
             Nothing -> Authenticated <$> insert User
-                { userIdent = credsIdent creds
-                , userPassword = Nothing
+                { userUsername = credsIdent creds
+                , userPassword = ""
+                , userEmailAddress = ""
+                , userVerified = False
+                , userVerifyKey = ""
+                , userResetPasswordKey = ""
                 }
 
     -- You can add other plugins like Google Email, email or OAuth here
     authPlugins app = [
-                      oauth2Google
+                      accountPlugin
+                      , oauth2Google
                         (oauthKeysClientId $ appGoogleOAuthKeys app)
                         (oauthKeysClientSecret $ appGoogleOAuthKeys app)
                       ] ++ extraAuthPlugins
@@ -219,6 +226,13 @@ instance YesodAuth App where
         where extraAuthPlugins = [authDummy | appAuthDummyLogin $ appSettings app]
 
     authHttpManager = getHttpManager
+
+-- TODO: We need to override the default functions here so that
+--       it actually sends an email
+instance AccountSendEmail App
+
+instance YesodAuthAccount (AccountPersistDB MyApp User) App where
+    runAccountDB = runAccountPersistDB
 
 -- | Access function to determine if a user is logged in.
 isAuthenticated :: Handler AuthResult
