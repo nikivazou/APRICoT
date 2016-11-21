@@ -4,7 +4,6 @@ module Model where
 
 import ClassyPrelude.Yesod
 import Database.Persist.Quasi
-import Yesod.Auth
 import Yesod.Auth.Account
 
 -- You can define all of your database entities in the entities file.
