@@ -5,7 +5,7 @@ database:
   # would like to have environment variable overrides, you could instead use
   # something like:
   #
-  #   database: "_env:MYSQL_DATABASE:conference-management-system_test"
-  database: conference-management-system_test
+  #   database: "_env:MYSQL_DATABASE:address-manager_test"
+  database: address-manager_test
 
 auth-dummy-login: true

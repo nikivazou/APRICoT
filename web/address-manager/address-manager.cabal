@@ -1,4 +1,4 @@
-name:              conference-management-system
+name:              address-manager
 version:           0.0.0
 cabal-version:     >= 1.8
 build-type:        Simple
@@ -95,13 +95,13 @@ library
                  , yesod-auth-oauth2
                  , yesod-auth-account
 
-executable         conference-management-system
+executable         address-manager
     if flag(library-only)
         Buildable: False
 
     main-is:           main.hs
     hs-source-dirs:    app
-    build-depends:     base, conference-management-system
+    build-depends:     base, address-manager
 
     ghc-options:       -threaded -rtsopts -with-rtsopts=-N
 
@@ -134,7 +134,7 @@ test-suite test
                 TupleSections
 
     build-depends: base
-                 , conference-management-system
+                 , address-manager
                  , yesod-auth
                  , yesod-test >= 1.5.2 && < 1.6
                  , yesod-core

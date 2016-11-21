@@ -24,12 +24,12 @@ auth-dummy-login : false
 # See https://github.com/yesodweb/yesod/wiki/Configuration#parsing-numeric-values-as-strings
 
 database:
-  user:     "_env:MYSQL_USER:conference-management-system"
-  password: "_env:MYSQL_PASSWORD:conference-management-system"
+  user:     "_env:MYSQL_USER:address"
+  password: "_env:MYSQL_PASSWORD:address"
   host:     "_env:MYSQL_HOST:localhost"
   port:     "_env:MYSQL_PORT:5432"
   # See config/test-settings.yml for an override during tests
-  database: "_env:MYSQL_DATABASE:conference_management_system"
+  database: "_env:MYSQL_DATABASE:address"
   poolsize: "_env:MYSQL_POOLSIZE:10"
 
 copyright: Insert copyright statement here

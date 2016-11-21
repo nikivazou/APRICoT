@@ -371,5 +371,5 @@
   (major1) == 2 && (major2) <  26 || \
   (major1) == 2 && (major2) == 26 && (minor) <= 0)
 
-#define CURRENT_PACKAGE_KEY "confe_9ert6BqWkZk1PeIVWZvoBZ"
+#define CURRENT_PACKAGE_KEY "addre_0oyqdcfV88r2zH42OAik77"
 

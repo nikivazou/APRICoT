@@ -1,5 +1,5 @@
 {-# LANGUAGE PackageImports #-}
-import "conference-management-system" Application (develMain)
+import "address-manager" Application (develMain)
 import Prelude (IO)
 
 main :: IO ()
