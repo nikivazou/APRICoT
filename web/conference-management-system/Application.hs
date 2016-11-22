@@ -15,22 +15,15 @@ module Application
     , db
     ) where
 
-#if MIN_VERSION_base(4,9,0)
-import Control.Concurrent                   (forkOSWithUnmask)
-#else
-import GHC.IO                               (unsafeUnmask)
-#endif
 import Control.Monad.Logger                 (liftLoc, runLoggingT)
-import Database.Persist.MySQL               (createMySQLPool, myConnInfo,
-                                             myPoolSize, runSqlPool)
-import qualified Database.MySQL.Base as MySQL
+import Database.Persist.Sqlite              (createSqlitePool, runSqlPool,
+                                             sqlDatabase, sqlPoolSize)
 import Import
 import Language.Haskell.TH.Syntax           (qLocation)
 import Network.Wai (Middleware)
 import Network.Wai.Handler.Warp             (Settings, defaultSettings,
                                              defaultShouldDisplayException,
                                              runSettings, setHost,
-                                             setFork, setOnOpen, setOnClose,
                                              setOnException, setPort, getPort)
 import Network.Wai.Middleware.RequestLogger (Destination (Logger),
                                              IPAddrSource (..),
@@ -69,9 +62,6 @@ makeFoundation appSettings = do
         (appStaticDir appSettings)
     appGoogleOAuthKeys <- getOAuthKeys
 
-    -- See http://www.yesodweb.com/blog/2016/11/use-mysql-safely-in-yesod
-    MySQL.initLibrary
-
     -- We need a log function to create a connection pool. We need a connection
     -- pool to create our foundation. And we need our foundation to get a
     -- logging function. To get out of this loop, we initially create a
@@ -85,9 +75,9 @@ makeFoundation appSettings = do
         logFunc = messageLoggerSource tempFoundation appLogger
 
     -- Create the database connection pool
-    pool <- flip runLoggingT logFunc $ createMySQLPool
-        (myConnInfo $ appDatabaseConf appSettings)
-        (myPoolSize $ appDatabaseConf appSettings)
+    pool <- flip runLoggingT logFunc $ createSqlitePool
+        (sqlDatabase $ appDatabaseConf appSettings)
+        (sqlPoolSize $ appDatabaseConf appSettings)
 
     -- Perform database migration using our application's logging settings.
     runLoggingT (runSqlPool (runMigration migrateAll) pool) logFunc
@@ -123,14 +113,7 @@ makeLogWare foundation =
         , destination = Logger $ loggerSet $ appLogger foundation
         }
 
-#if !  MIN_VERSION_base(4,9,0)
-forkOSWithUnmask :: ((forall a . IO a -> IO a) -> IO ()) -> IO ThreadId
-forkOSWithUnmask io = forkOS (io unsafeUnmask)
-#endif
-
 -- | Warp settings for the given foundation value.
--- Use bound threads for thread-safe use of MySQL, and initialise and finalise
--- them: see http://www.yesodweb.com/blog/2016/11/use-mysql-safely-in-yesod
 warpSettings :: App -> Settings
 warpSettings foundation =
       setPort (appPort $ appSettings foundation)
@@ -143,9 +126,6 @@ warpSettings foundation =
             "yesod"
             LevelError
             (toLogStr $ "Exception from Warp: " ++ show e))
-    $ setFork (\x -> void $ forkOSWithUnmask x)
-    $ setOnOpen (const $ MySQL.initThread >> return True)
-    $ setOnClose (const MySQL.endThread)
       defaultSettings
 
 -- | For yesod devel, return the Warp settings and WAI Application.
