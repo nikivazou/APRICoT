@@ -94,6 +94,8 @@ library
                  , load-env
                  , yesod-auth-oauth2
                  , yesod-auth-account
+                 , smtps-gmail
+                 , mime-mail
 
 executable         conference-management-system
     if flag(library-only)

@@ -15,6 +15,10 @@ import Yesod.Auth.Account
 import qualified Yesod.Core.Unsafe as Unsafe
 import qualified Data.CaseInsensitive as CI
 import qualified Data.Text.Encoding as TE
+import qualified Data.Text as T
+import Network.Mail.Mime
+import Network.Mail.Client.Gmail
+import System.Environment
 
 -- | The foundation datatype for your application. This can be a good place to
 -- keep settings and values requiring initialization before your application
@@ -226,9 +230,40 @@ instance YesodAuth App where
 
     authHttpManager = getHttpManager
 
--- TODO: We need to override the default functions here so that
---       it actually sends an email
+getEmailCredentials :: IO (Text, Text)
+getEmailCredentials = do
+    email <- getEnv "GOOGLE_USERNAME"
+    password <- getEnv "GOOGLE_PASSWORD"
+    return (T.pack email, T.pack password)
+
+sendEmail :: Text -> Text -> Text -> IO ()
+sendEmail to subject body = do
+    (from, password) <- liftIO getEmailCredentials
+    sendGmail (fromStrict from)
+              (fromStrict password)
+              (Address (Just "Sig Bovik") from)
+              [Address Nothing to]
+              []
+              []
+              subject
+              (fromStrict body)
+              []
+              10000000
+
+
 instance AccountSendEmail App
+    where
+    sendVerifyEmail user email url = do
+    liftIO $ sendEmail email
+                  "Confirm your account"
+                  ("Hi " ++ user ++ ",\n\nPlease click this link \
+                   \ to confirm your account:\n" ++ url)
+    where
+    sendNewPasswordEmail user email url = do
+    liftIO $ sendEmail email
+                  "Reset your password"
+                  ("Hi " ++ user ++ ",\n\nPlease click this link \
+                   \ to reset your password:\n" ++ url)
 
 instance YesodAuthAccount (AccountPersistDB App User) App where
     runAccountDB = runAccountPersistDB
