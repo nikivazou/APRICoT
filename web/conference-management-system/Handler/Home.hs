@@ -59,4 +59,4 @@ sampleForm = renderBootstrap3 BootstrapBasicForm $ FileForm
             }
 
 commentIds :: (Text, Text, Text)
-commentIds = ("js-commentForm", "js-createCommentTextarea", "js-commentList")
+commentIds = ("js-commentForm", "js-createCommentTextausernamrea", "js-commentList")

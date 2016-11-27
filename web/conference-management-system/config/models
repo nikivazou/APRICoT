@@ -7,6 +7,16 @@ User
     verifyKey Text
     resetPasswordKey Text
     deriving Show
+Paper
+    owner UserId 
+    filepath Text 
+    title Text
+    abstract Text
+    content ByteString
+    deriving Show
+AuthorToPaper
+    author Text
+    paper PaperId
 Email
     email Text
     userId UserId Maybe

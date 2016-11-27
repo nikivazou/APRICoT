@@ -24,6 +24,8 @@ library
                      Handler.Home
                      Handler.Comment
                      Handler.Profile
+                     Handler.Upload
+                     Handler.Download
 
     if flag(dev) || flag(library-only)
         cpp-options:   -DDEVELOPMENT
@@ -96,6 +98,8 @@ library
                  , yesod-auth-account
                  , smtps-gmail
                  , mime-mail
+                 , conduit-extra
+                 , blaze-markup
 
 executable         conference-management-system
     if flag(library-only)
