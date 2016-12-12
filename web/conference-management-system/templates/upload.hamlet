@@ -1,5 +1,4 @@
-    <!-- Forms
-        ================================================== -->
+<div .ui.container>
         <div .row>
             <div .col-lg-6>
                 <div .bs-callout bs-callout-info well>

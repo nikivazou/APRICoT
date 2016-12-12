@@ -24,9 +24,9 @@ postUploadR = do
             paperId <- runDB $ insert $ Paper uid (fileName fi)
                             title (unTextarea abstract)
                                  (S.pack . L.unpack $ fileBytes)
-            runDB $ insert_ $ AuthorToPaper author paperId
+            runDB $ insert_ $ Author author paperId
             setMessage "PDF saved"
-            redirect ProfileR 
+            redirect HomeR
         _ -> do
             setMessage "Something went wrong"
             redirect UploadR 
