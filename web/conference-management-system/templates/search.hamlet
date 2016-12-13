@@ -19,7 +19,7 @@
     $if not $ null papersByAuthor
       <h2> Searches Matching Paper Authors
       <table .table>
-            $forall (E.Value paperId, E.Value title, E.Value filepath, E.Value abstract) <- papersByAuthor
+            $forall (E.Value paperId, E.Value title, E.Value _filepath, E.Value _abstract) <- papersByAuthor
               <tr>
                   <td>
                       <a href=@{DownloadR paperId}>

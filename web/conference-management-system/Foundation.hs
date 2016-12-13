@@ -94,7 +94,7 @@ instance Yesod App where
         mcurrentRoute <- getCurrentRoute
 
         ((formRes, searchWidget), _) <- runFormGet searchForm
-        searchResults <- case formRes of
+        _ <- case formRes of
             FormSuccess qstring -> redirect $ SearchR qstring 
             _ -> return ()
 
