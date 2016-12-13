@@ -93,6 +93,11 @@ instance Yesod App where
         muser <- maybeAuthPair
         mcurrentRoute <- getCurrentRoute
 
+        ((formRes, searchWidget), _) <- runFormGet searchForm
+        searchResults <- case formRes of
+            FormSuccess qstring -> redirect $ SearchR qstring 
+            _ -> return ()
+
         -- Get the breadcrumbs, as defined in the YesodBreadcrumbs instance.
         (title, parents) <- breadcrumbs
 
@@ -155,6 +160,7 @@ instance Yesod App where
     isAuthorized ProfileR _ = isAuthenticated
     isAuthorized UploadR _ = isAuthenticated
     isAuthorized (DownloadR _) _ = isAuthenticated
+    isAuthorized (SearchR _) _ = isAuthenticated
 
     -- This function creates static content files in the static folder
     -- and names them based on a hash of their content. This allows
@@ -184,6 +190,9 @@ instance Yesod App where
 
     makeLogger = return . appLogger
 
+-- Search Bar Form
+searchForm :: Html -> MForm Handler (FormResult Text, Widget)
+searchForm = renderDivs $ areq (searchField False) "Search" Nothing
 
 -- Define breadcrumbs.
 instance YesodBreadcrumbs App where

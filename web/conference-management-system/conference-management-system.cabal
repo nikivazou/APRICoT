@@ -25,6 +25,7 @@ library
                      Handler.Profile
                      Handler.Upload
                      Handler.Download
+                     Handler.Search
 
     if flag(dev) || flag(library-only)
         cpp-options:   -DDEVELOPMENT
@@ -99,6 +100,7 @@ library
                  , mime-mail
                  , conduit-extra
                  , blaze-markup
+                 , esqueleto
 
 executable         conference-management-system
     if flag(library-only)
