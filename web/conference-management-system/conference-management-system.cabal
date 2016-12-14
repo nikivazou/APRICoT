@@ -20,12 +20,16 @@ library
                      Model
                      Settings
                      Settings.StaticFiles
+                     Data.PaperStatus
                      Handler.Common
                      Handler.Home
                      Handler.Profile
                      Handler.Upload
                      Handler.Download
                      Handler.Search
+                     Handler.Review
+                     Handler.ReviewPaper
+                     Handler.ProgramChair
 
     if flag(dev) || flag(library-only)
         cpp-options:   -DDEVELOPMENT

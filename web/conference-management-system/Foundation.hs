@@ -102,7 +102,7 @@ instance Yesod App where
         (title, parents) <- breadcrumbs
 
         -- Define the menu items of the header.
-        let menuItems =
+        let mItems =
                 [ NavbarLeft $ MenuItem
                     { menuItemLabel = "Home"
                     , menuItemRoute = HomeR
@@ -129,6 +129,24 @@ instance Yesod App where
                     , menuItemAccessCallback = isJust muser
                     }
                 ]
+
+        let mItemsReviewer = case muser of 
+                        Nothing -> mItems 
+                        Just (_uid, user) -> if (userReviewer user) then mItems ++
+                            [NavbarLeft $ MenuItem
+                                { menuItemLabel = "Review"
+                                , menuItemRoute = ReviewR 
+                                , menuItemAccessCallback = isJust muser}]
+                            else mItems 
+
+        let menuItems = case muser of 
+                            Nothing -> mItemsReviewer
+                            Just (_uid, user) -> if (userPc user) then mItemsReviewer ++
+                                [NavbarLeft $ MenuItem
+                                    { menuItemLabel = "Program Chair"
+                                    , menuItemRoute = ProgramChairR
+                                    , menuItemAccessCallback = isJust muser}]
+                                else mItemsReviewer
 
         let navbarLeftMenuItems = [x | NavbarLeft x <- menuItems]
         let navbarRightMenuItems = [x | NavbarRight x <- menuItems]
@@ -161,6 +179,9 @@ instance Yesod App where
     isAuthorized UploadR _ = isAuthenticated
     isAuthorized (DownloadR _) _ = isAuthenticated
     isAuthorized (SearchR _) _ = isAuthenticated
+    isAuthorized ReviewR _ = isReviewer
+    isAuthorized (ReviewPaperR _) _ = isReviewer
+    isAuthorized ProgramChairR _ = isPc
 
     -- This function creates static content files in the static folder
     -- and names them based on a hash of their content. This allows
@@ -232,6 +253,8 @@ instance YesodAuth App where
                 , userVerified = False
                 , userVerifyKey = ""
                 , userResetPasswordKey = ""
+                , userReviewer = False
+                , userPc = False
                 }
 
     -- You can add other plugins like Google Email, email or OAuth here
@@ -291,6 +314,24 @@ isAuthenticated = do
     return $ case muid of
         Nothing -> Unauthorized "You must login to access this page"
         Just _ -> Authorized
+
+-- | Access function to determine if a user is a reviewer
+isReviewer :: Handler AuthResult
+isReviewer = do
+    pair <- maybeAuthPair
+    let msg = "You must be a reviewer to access this page"
+    return $ case pair of
+        Nothing -> Unauthorized msg
+        Just (_id, user) -> if (userReviewer user) then Authorized else Unauthorized msg
+
+-- | Access function to determine if a user is a Pc 
+isPc :: Handler AuthResult
+isPc = do
+    pair <- maybeAuthPair
+    let msg = "You must be the program chair to access this page"
+    return $ case pair of
+        Nothing -> Unauthorized msg
+        Just (_id, user) -> if (userPc user) then Authorized else Unauthorized msg
 
 instance YesodAuthPersist App
 

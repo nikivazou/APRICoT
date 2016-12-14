@@ -10,3 +10,6 @@
 /upload UploadR GET POST
 /download/#PaperId DownloadR GET
 /search/#Text SearchR GET
+/review ReviewR GET
+/review/#ReviewId ReviewPaperR GET POST
+/pc ProgramChairR GET POST

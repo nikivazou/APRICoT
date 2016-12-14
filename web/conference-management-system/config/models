@@ -6,6 +6,8 @@ User
     verified Bool
     verifyKey Text
     resetPasswordKey Text
+    reviewer Bool
+    pc Bool
     deriving Show
 Paper
     owner UserId 
@@ -17,5 +19,10 @@ Paper
 Author
     author Text
     paper PaperId
+Review
+    paper    PaperId
+    user     UserId
+    status   PaperStatus 
+    comments Text
 
  -- By default this file is used in Model.hs (which is imported by Foundation.hs)
