@@ -99,6 +99,9 @@ print = undefined
 -- so putting it on the result type creates inconsistencies.
 {- getCurrentUser :: forall <p :: User -> Prop>.
                       w:World -> Tagged <p> (User<p>) @-}
+
+{-@ measure currentUser :: World -> User @-}
+{-@ getCurrentUser :: w:World -> Tagged {v:User | v == currentUser w }@-}                      
 getCurrentUser :: World -> Tagged User 
 getCurrentUser = undefined 
 
